@@ -1,84 +1,79 @@
-import { useState } from "react";
-import { LayoutList, CircleUserRound, X } from "lucide-react";
-import ChatArea from "../components/chat/ChatArea";
-import ChatList from "../components/chat/ChatList";
-import ProfileSection from "../components/chat/ProfileSection";
+import React, { useState } from 'react';
+import { Menu, UserCircle, X } from 'lucide-react';
+import ChatList from '../components/chat/ChatList';
+import ChatArea from '../components/chat/ChatArea';
+import ProfileSection from '../components/chat/ProfileSection';
 
-const Chat = (): JSX.Element => {
-  const [isChatListOpen, setIsChatListOpen] = useState<boolean>(false);
-  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
-
-  const toggleChatList = () => {
-    setIsChatListOpen(!isChatListOpen);
-    if (isProfileOpen) setIsProfileOpen(false); // Close profile if open
-  };
-
-  const toggleProfile = () => {
-    setIsProfileOpen(!isProfileOpen);
-    if (isChatListOpen) setIsChatListOpen(false); // Close chat list if open
-  };
-
-  const closeAll = () => {
-    setIsChatListOpen(false);
-    setIsProfileOpen(false);
-  };
-
-  return (
-    <div className="flex flex-col lg:grid lg:grid-cols-3 gap-5 h-full relative">
-      {/* Mobile Header with Toggle Buttons */}
-      <div className="lg:hidden flex justify-between items-center bg-gray-200 p-3 rounded-md shadow-md mt-12">
-        <button onClick={toggleChatList}>
-          <LayoutList  size={24} />
-        </button>
-        <button onClick={toggleProfile}>
-          <CircleUserRound size={24} />
-        </button>
+function Chat() {
+    const [showChatList, setShowChatList] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+  
+    return (
+      <div className="h-screen flex flex-col ">
+        {/* Mobile Header */}
+        <div className="lg:hidden mt-12 flex items-center justify-between p-4  border-b shadow-sm">
+          <button
+            onClick={() => setShowChatList(!showChatList)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Toggle chat list"
+          >
+            {showChatList ? (
+              <X className="w-6 h-6 text-gray-600" />
+            ) : (
+              <Menu className="w-6 h-6 text-gray-600" />
+            )}
+          </button>
+          <h1 className="text-xl font-semibold text-gray-800">Chat App</h1>
+          <button
+            onClick={() => setShowProfile(!showProfile)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Toggle profile"
+          >
+            {showProfile ? (
+              <X className="w-6 h-6 text-gray-600" />
+            ) : (
+              <UserCircle className="w-6 h-6 text-gray-600" />
+            )}
+          </button>
+        </div>
+  
+        <div className="flex-1 flex overflow-hidden relative">
+          {/* Overlay for mobile when sidebar is open */}
+          <div
+            className={`${
+              (showChatList || showProfile) ? 'opacity-50 pointer-events-auto' : 'opacity-0 pointer-events-none'
+            } lg:hidden fixed inset-0 bg-black transition-opacity duration-300 z-20`}
+            onClick={() => {
+              setShowChatList(false);
+              setShowProfile(false);
+            }}
+          />
+  
+          {/* Chat List */}
+          <div
+            className={`${
+              showChatList ? 'translate-x-0' : '-translate-x-full'
+            } lg:translate-x-0 w-80 fixed lg:static z-30 h-[calc(100%-4rem)] lg:h-full transition-transform duration-300 ease-in-out shrink-0 p-4 `}
+          >
+            <ChatList />
+          </div>
+  
+          {/* Chat Area */}
+          <div className="flex-1 w-full h-full lg:mx-0 p-4 rounded-xl">
+            <ChatArea />
+          </div>
+  
+          {/* Profile Section */}
+          <div
+            className={`${
+              showProfile ? 'translate-x-0' : 'translate-x-full'
+            } lg:translate-x-0 w-80 fixed lg:static right-0 z-30 h-[calc(100%-4rem)] lg:h-full transition-transform duration-300 ease-in-out shrink-0 p-4`}
+          >
+            <ProfileSection />
+          </div>
+        </div>
       </div>
-
-      {/* Overlay for Mobile (Visible when either section is open) */}
-      {(isChatListOpen || isProfileOpen) && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={closeAll}
-        ></div>
-      )}
-
-      {/* Chat List (Visible only when "list" is active) */}
-      <div
-        className={`lg:block lg:col-span-1 fixed lg:static inset-y-0 left-0 w-64 z-50 transform transition-transform duration-300 ease-in-out ${
-          isChatListOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
-      >
-        <ChatList/>
-        <button
-          className="lg:hidden absolute top-2 right-2 p-2"
-          onClick={toggleChatList}
-        >
-          <X size={24} />
-        </button>
-      </div>
-
-      {/* Chat Area (Always Visible) */}
-      <div className="lg:col-span-1 ">
-        <ChatArea />
-      </div>
-
-      {/* Profile Section (Visible only when "profile" is active) */}
-      <div
-        className={`lg:block lg:col-span-1 fixed lg:static inset-y-0 right-0 w-64 z-50 transform transition-transform duration-300 ease-in-out ${
-          isProfileOpen ? "translate-x-0" : "translate-x-full"
-        } lg:translate-x-0`}
-      >
-        <ProfileSection  />
-        <button
-          className="lg:hidden absolute top-2 left-2 p-2"
-          onClick={toggleProfile}
-        >
-          <X size={24} />
-        </button>
-      </div>
-    </div>
-  );
-};
+    );
+  }
 
 export default Chat;

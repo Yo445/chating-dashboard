@@ -6,9 +6,6 @@ interface HeaderProps {
   toggleSidebar: () => void;
 }
 
-/**
- * 
- */
 const Header = ({
   isSidebarOpen,
   toggleSidebar,
@@ -33,6 +30,5 @@ const Header = ({
     </div>
   );
 };
-// #endregion
 
 export default Header;
